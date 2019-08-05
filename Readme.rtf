@@ -1,0 +1,63 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Times New Roman;}{\f1\fnil Courier New;}{\f2\fnil\fcharset0 Courier New;}}
+{\colortbl ;\red0\green0\blue255;\red128\green128\blue128;\red0\green0\blue0;\red0\green0\blue128;\red0\green128\blue128;\red102\green0\blue153;\red255\green255\blue255;}
+{\*\generator Riched20 10.0.18362}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 This repository contains Factored Latent-Dynamic Conditional Random FIelds (FLDCRF) codes for single and multi-label sequence labeling/prediction. FLDCRF [1] is a single and multi-label generalization of LDCRF [2]. In our single-label experiments on 4 datasets (NTU [1], UCI opportunity [3], UCI gesture phase [4], JAAD [5]) across 6 experiments, FLDCRF improves over LDCRF performance and outperforms LSTM and LSTM-CRF on all test sets. All datasets are small/medium sized with < 40,000 instances. \par
+Additionally, LSTM is known for tedious hyper-parameter optimization process, big-data-driven performance and long training time. FLDCRF offers easier model selection (with no need to tune number of epochs), performs better than LSTM on small/medium datasets, is much easier to comprehend and takes significantly lesser training time, even without GPU implementation. We also find FLDCRF to generalize better over validation and test sets, i.e., selected LSTM models perform worse on test sets than selected FLDCRF models, even though in some cases LSTM models perform better on validation. Such inconsistency across validation and test, blurry intuition and tedious model selection makes LSTM hard for industrial applications.\par
+In our recent multi-label experiment on UCI opportunity dataset [3], FLDCRF outperformed LDCRF, Factorial CRF, LSTM-CRF, LSTM and a LSTM multi label model. We will update the paper link for multi-label experiment shortly.\par
+To run our codes, you need to install pystan - \par
+
+\pard\sa200\sl276\slmult1\qc pip install pystan\par
+
+\pard\sa200\sl276\slmult1 PyStan is the Python interface of Stan probabilistic modeling language. For pystan documentation, refer to this - {{\field{\*\fldinst{HYPERLINK https://pystan.readthedocs.io/en/latest/getting_started.html }}{\fldrslt{https://pystan.readthedocs.io/en/latest/getting_started.html\ul0\cf0}}}}\f0\fs22 . For stan language documentation, please check this - {{\field{\*\fldinst{HYPERLINK https://mc-stan.org/users/documentation/ }}{\fldrslt{https://mc-stan.org/users/documentation/\ul0\cf0}}}}\f0\fs22 . Stan provides easy-to-use BFGS, L-BFGS and Newton optimization algorithms with effective stopping criteria. As we do not need to tune the number of training epochs for FLDCRF, Pystan is a very useful platform.\par
+After having the codes in your system, you need to prepare the data as instructed in the python code (.py) and stan code (.stan). Then compile the stan model for the first time by running complie_model.py. Once the model is compiled, provide the path to the compiled  model in the python code - \par
+
+\pard\box\brdrdash\brdrw0 \cbpat7\sa200\sl276\slmult1\cf2\i\f1\fs18 # load compiled model, To compile model run compile_model.py\line\cf3\i0 sm = pickle.load(\cf4 open\cf3 (\cf5\b '<path_to_compiled_model>/FLDCRF_opportunity_HL.pkl'\cf3\b0 , \cf5\b 'rb'\cf3\b0 ))    \par
+\fs17\par
+\f0\fs22 Next, load the data and prepare a dictionary to pass the data to the stan model through the python model FLDCRF_pystan.py\f2\fs17\lang16393 .\par
+\par
+\cf2\i\f1\fs18 # load features and labels\line\line\cf3\i0 dir = <feature_and_label_file>                \cf2\i # '/mnt/4tb_other/satyajit/PycharmProjects/LSTM_Opportunity/Nested_CV/Features_and_labels/Outer/Set1'\line\line\cf3\i0 mat = scipy.io.loadmat(dir) \line\line training_features = mat[\cf5\b 'training_features'\cf3\b0 ]\line test_features = mat[\cf5\b 'test_features'\cf3\b0 ]\line training_labels = mat[\cf5\b 'training_labels'\cf3\b0 ]\line test_labels = mat[\cf5\b 'test_labels'\cf3\b0 ]\line training_n_steps = mat[\cf5\b 'training_n_steps'\cf3\b0 ]\line test_n_steps = mat[\cf5\b 'test_n_steps'\cf3\b0 ]\line\line\line\cf2\i ### prepare data for pystan\line\line\cf3\i0 n_trainvid = training_n_steps.shape[\cf1 0\cf3 ]\line n_testvid = test_n_steps.shape[\cf1 0\cf3 ]\line n_class = \cf1 2 \line\line\line\cf3 n_feature = \cf1 145\line\line\cf3 n_layers = \cf1 2    \cf2\i # model hyper-parameter\f2 , test 1,2,3\f1\line\cf3\i0 n_state = \cf1 3     \cf2\i # model hyper-parameter\f2 , test 1,2,3,4,5,6\par
+# n_layers and n_state can be increased more depending on system limitations, but it is expected to observe decline in validation performance after a point due to overfitting.\f1\line\line\cf3\i0 num1 = n_state ** n_layers\line num2 = (n_class * n_state) ** n_layers\line num4 = (n_class * n_state) ** (n_layers - \cf1 1\cf3 )\line\line max_step = \cf1 1522\line\line\cf3 n_step = training_n_steps.ravel()  \cf2\i # reshape\line\cf3\i0 test_step_length = test_n_steps.ravel()\line\line X_train = training_features\line\line X_test = test_features\line\line y = training_labels\line\line reg_l2_transition = \cf1 10\line\cf3 reg_l2_feature = \cf1 0.1\line\line\line\cf2\i ### jot all required data in a dictionary to pass to stan model\line\cf3\i0 dat = \cf4 dict\cf3 (\cf6 n_trainvid\cf3 =n_trainvid, \cf6 n_testvid\cf3 =n_testvid, \cf6 n_layers\cf3 =n_layers, \cf6 num1\cf3 =num1, \cf6 num2\cf3 =num2,\f2  \cf6\f1 num4\cf3 =num4, \cf6 n_feature\cf3 =n_feature, \cf6 n_state\cf3 =n_state, \cf6 n_class\cf3 =n_class, \cf6 n_step\cf3 =n_step,\cf6 test_step_length\cf3 =test_step_length, \cf6 max_step\cf3 =max_step, \cf6 X_train\cf3 =X_train,\f2  \cf6\f1 X_test\cf3 =X_test, \cf6 y\cf3 =y, \cf6 reg_l2_transition\cf3 =reg_l2_transition, \cf6 reg_l2_feature\cf3 =reg_l2_feature)\line\line\line\cf2\i # load compiled model, To compile model run compile_model.py\line\cf3\i0 sm = pickle.load(\cf4 open\cf3 (\cf5\b '<path_to_compiled_model>/FLDCRF_opportunity_HL.pkl'\cf3\b0 , \cf5\b 'rb'\cf3\b0 ))     \line  \line\line\cf2\i # train model and generate inferred quantities\line\line\cf3\i0 fit = sm.optimizing(\cf6 data\cf3 =dat, \cf6 algorithm\cf3 =\cf5\b 'BFGS'\cf3\b0 )\par
+\par
+\f0\fs22 We also provide a forward inference code (online inference) inside the .stan file, described under the 'generated_quantities' block. We generate inferred probability values for each class and are saved under the 'Actual_proby' variable. We will include the Forward-backward inference shortly.\par
+\cf2\i\f1\fs18 # save output as necessary, here we save the predicted class probability values [n_testvid, max_step, n_class]\line\line\cf3\i0 HL = fit[\cf5\b 'Actual_proby'\cf3\b0 ]  \line\line filename_new = \cf5\b ' '\cf3\b0 .join((\cf5\b '<path_to_save_file>'\cf3\b0 , \cf5\b '.mat'\cf3\b0 ))\line\line scipy.io.savemat(filename_new.replace(\cf5\b " "\cf3\b0 , \cf5\b ""\cf3\b0 ), \{\cf5\b 'HL'\cf3\b0 : HL\})\par
+\par
+\f0\fs22 We are also in the process of applying FLDCRF in end-to-end models and its GPU implementation\cf0\lang9 . \cf3\lang16393 Any contributions are welcome. \cf0\lang9 We also plan to test FLDCRF on larger datasets.\cf3\lang16393\par
+\par
+Next updates:\par
+1. Forward-backward inference\par
+2. Multi-label FLDCRF code and data\par
+3. GPU implementation\par
+4. CNN-FLDCRF\par
+\par
+If you find our codes useful, please cite our paper(s) [1, 2].\par
+\par
+Email us for any queries on FLDCRF or our codes:\par
+* satyajit001@e.ntu.edu.sg\par
+* jdauwels@ntu.edu.sg\par
+\lang9\par
+
+\pard\sa200\sl276\slmult1\cf0 References:\par
+1. S. Neogi, M. Hoy, K. Dang, H. Yu, J. Dauwels, "Context Model for Pedestrian Intention Prediction using Factored Latent-Dynamic Conditional Random Fields", {{\field{\*\fldinst{HYPERLINK https://arxiv.org/pdf/1907.11881.pdf }}{\fldrslt{https://arxiv.org/pdf/1907.11881.pdf\ul0\cf0}}}}\f0\fs22  (2019).\par
+
+\pard 2. L. P. Morency, A. Quattoni, T. Darrell, "Latent-Dynamic Discriminative Models for Continuous Gesture Recognition". In Proceedings of the IEEE Conference on Computer Vision\par
+
+\pard\sa200\sl276\slmult1 and Pattern Recognition, IEEE Computer Society, 2007.\par
+
+\pard 3. R. Chavarriaga, H. Sagha, A. Calatroni, S. Digumarti, G. Trster, J. D. R. Milln, D Roggen.\par
+"The Opportunity challenge: A benchmark database for on-body sensor-based activity\par
+
+\pard\sa200\sl276\slmult1 recognition". Pattern Recognition Letters, 2013.\par
+
+\pard 4. R. C. B. Madeo, C. A. M. Lima, S. M. PERES, "Gesture Unit Segmentation using Support\par
+Vector Machines: Segmenting Gestures from Rest Positions". In Proceedings of the 28th\par
+
+\pard\sa200\sl276\slmult1 Annual ACM Symposium on Applied Computing (SAC), p. 46-52, 2013.\par
+
+\pard 5. I. Kotseruba, A. Rasouli, J. K. Tsotsos, \ldblquote Joint Attention in Autonomous Driving (JAAD).\rdblquote  arXiv preprint arXiv:1609.04741(2016).\par
+\par
+6. S. Neogi, M. Hoy, W. Chaoqun, J. Dauwels, \\Context Based Pedestrian Intention Prediction\par
+Using Factored Latent Dynamic Conditional Random Fields". In Proceed-\par
+ings of the 2017 IEEE Symposium Series on Computational Intelligence (SSCI), DOI:\par
+10.1109/SSCI.2017.8280970, 2017.\par
+}
+ 
