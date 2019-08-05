@@ -6,7 +6,7 @@ FLDCRF [1] is a single and multi-label generalization of LDCRF [2]. In our singl
 Additionally, LSTM is known for tedious hyper-parameter optimization process, big-data-driven performance and long training time. FLDCRF offers easier model selection (with no need to tune number of epochs), performs better than LSTM on small/medium datasets, is much easier to comprehend and takes significantly lesser training time, even without GPU implementation. We also find FLDCRF to generalize better over validation and test sets, i.e., selected LSTM models perform worse on test sets than selected FLDCRF models, even though in some cases LSTM models perform better on validation. Such inconsistency across validation and test, blurry intuition and tedious model selection makes LSTM hard for industrial applications.
 
 
-In our recent multi-label experiment on UCI opportunity dataset [3], FLDCRF outperformed LDCRF, Factorial CRF, LSTM-CRF, LSTM and a LSTM multi label model. We will update the paper link for multi-label experiment shortly.
+In our recent multi-label sequence labeling experiment on UCI opportunity dataset [3], FLDCRF outperformed LDCRF, Factorial CRF, LSTM-CRF, LSTM and a LSTM multi label model. We will update the paper link for multi-label experiment shortly.
 
 To run our codes, you need to install pystan - 
 
