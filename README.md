@@ -33,7 +33,7 @@ Email us for any queries on FLDCRF or our codes:
 
 
 References:
-1. S. Neogi, M. Hoy, K. Dang, H. Yu, J. Dauwels, "Context Model for Pedestrian Intention Prediction using Factored Latent-Dynamic Conditional Random Fields", https://arxiv.org/pdf/1907.11881.pdf (2019).
+1. S. Neogi, M. Hoy, K. Dang, H. Yu, J. Dauwels, "Context Model for Pedestrian Intention Prediction using Factored Latent-Dynamic Conditional Random Fields", https://arxiv.org/abs/1907.11881 (2019).
 2. L. P. Morency, A. Quattoni, T. Darrell, "Latent-Dynamic Discriminative Models for Continuous Gesture Recognition". In Proceedings of the IEEE Conference on Computer Vision
 and Pattern Recognition, IEEE Computer Society, 2007.
 3. R. Chavarriaga, H. Sagha, A. Calatroni, S. Digumarti, G. Trster, J. D. R. Milln, D Roggen.
