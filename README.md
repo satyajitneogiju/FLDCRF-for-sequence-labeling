@@ -16,6 +16,22 @@ PyStan is the Python interface of Stan probabilistic modeling language. For pyst
 
 Please download the Readme.rtf file for further instructions.  
 
+We are also in the process of applying FLDCRF in end-to-end models and its GPU implementation. Any contributions are welcome. We also plan to test FLDCRF on larger datasets.
+
+Next updates:
+1. Forward-backward inference
+2. Multi-label FLDCRF code and data
+3. GPU implementation
+4. CNN-FLDCRF
+
+If you find our codes useful, please cite our paper(s) [1, 6].
+
+Email us for any queries on FLDCRF or our codes:
+1. satyajit001@e.ntu.edu.sg
+2. satyajitneogiju@gmail.com
+3. jdauwels@ntu.edu.sg
+
+
 References:
 1. S. Neogi, M. Hoy, K. Dang, H. Yu, J. Dauwels, "Context Model for Pedestrian Intention Prediction using Factored Latent-Dynamic Conditional Random Fields", https://arxiv.org/pdf/1907.11881.pdf (2019).
 2. L. P. Morency, A. Quattoni, T. Darrell, "Latent-Dynamic Discriminative Models for Continuous Gesture Recognition". In Proceedings of the IEEE Conference on Computer Vision
