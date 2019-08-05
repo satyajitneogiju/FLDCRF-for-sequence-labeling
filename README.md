@@ -1,5 +1,6 @@
 # FLDCRF-for-sequence-labeling
 Factored Latent-Dynamic Conditional Random Fields for sequence labeling and prediction. FLDCRF outperforms LSTM on small/medium datasets (&lt;40,000 instances) across 6 experiments on 4 datasets.  
+
 FLDCRF [1] is a single and multi-label generalization of LDCRF [2]. In our single-label experiments on 4 datasets (NTU [1], UCI opportunity [3], UCI gesture phase [4], JAAD [5]) across 6 experiments, FLDCRF improves over LDCRF performance and outperforms LSTM and LSTM-CRF on all test sets. All datasets are small/medium sized with < 40,000 instances.  
 
 Additionally, LSTM is known for tedious hyper-parameter optimization process, big-data-driven performance and long training time. FLDCRF offers easier model selection (with no need to tune number of epochs), performs better than LSTM on small/medium datasets, is much easier to comprehend and takes significantly lesser training time, even without GPU implementation. We also find FLDCRF to generalize better over validation and test sets, i.e., selected LSTM models perform worse on test sets than selected FLDCRF models, even though in some cases LSTM models perform better on validation. Such inconsistency across validation and test, blurry intuition and tedious model selection makes LSTM hard for industrial applications.
