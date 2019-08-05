@@ -13,12 +13,12 @@ dir = <feature_and_label_file>                # '/mnt/4tb_other/satyajit/Pycharm
 
 mat = scipy.io.loadmat(dir) 
 
-training_features = mat['training_features']
-test_features = mat['test_features']
-training_labels = mat['training_labels']
-test_labels = mat['test_labels']
-training_n_steps = mat['training_n_steps']
-test_n_steps = mat['test_n_steps']
+training_features = mat['training_features']    # must be [n_trainvid, max_step, n_feature]
+test_features = mat['test_features']            # must be [n_testvid, max_step, n_feature]
+training_labels = mat['training_labels']        # must be [n_trainvid, max_step]
+test_labels = mat['test_labels']                # must be [n_testvid, max_step]
+training_n_steps = mat['training_n_steps']      # must be [n_trainvid]
+test_n_steps = mat['test_n_steps']              # must be [n_testvid]
 
 
 ### prepare data for pystan
