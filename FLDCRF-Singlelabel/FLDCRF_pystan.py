@@ -37,9 +37,9 @@ n_state = 3     # model hyper-parameter, test 1,2,3,4,5,6
 # but it is expected to observe decline in validation performance after a point due to overfitting.
 
 
-num1 = n_state ** n_layers
-num2 = (n_class * n_state) ** n_layers
-num4 = (n_class * n_state) ** (n_layers - 1)
+num1 = n_state ** n_layers                         # model component, do not change
+num2 = (n_class * n_state) ** n_layers             # model component, do not change
+num4 = (n_class * n_state) ** (n_layers - 1)       # model component, do not change
 
 max_step = 1522
 
