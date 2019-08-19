@@ -30,11 +30,11 @@ data
  
 parameters
 {
-  simplex[n_label * n_state] theta_transition[n_layers, n_label * n_state];      // transition parameters
+  simplex[n_class * n_state] theta_transition[n_layers, n_class * n_state];      // transition parameters
 
   vector[num2] theta_intrinsic;                                                  // influence parameters
 
-  vector[n_feature] theta_feature_cont[n_layers, n_label * n_state];             // emission/observation parameters
+  vector[n_feature] theta_feature_cont[n_layers, n_class * n_state];             // emission/observation parameters
 }
  
 model
@@ -47,7 +47,7 @@ model
     int last_label;
 
     real temp_con[n_layers, n_state, n_state];
-    real temp_uncon[n_layers, n_label * n_state, n_label * n_state];   
+    real temp_uncon[n_layers, n_class * n_state, n_class * n_state];   
 
     int states_cur[n_layers];
     int states_cur_relative[n_layers];
@@ -78,9 +78,9 @@ model
 
     for (i in 1:n_layers)
     {
-      for (j in 1:(n_label*n_state))
+      for (j in 1:(n_class*n_state))
       {
-        for (k in 1:(n_label*n_state))
+        for (k in 1:(n_class*n_state))
         {
           temp_uncon[i,j,k] = 0;
         }
@@ -149,8 +149,8 @@ model
 
                 for (layer in 1:n_layers)
                 {
-                  num3 = num3 * (n_label*n_state);
-                  actual_state = actual_state + (states_cur[layer] - 1) * (num3 / (n_label*n_state));
+                  num3 = num3 * (n_class*n_state);
+                  actual_state = actual_state + (states_cur[layer] - 1) * (num3 / (n_class*n_state));
                 }
 
                 actual_state = actual_state + 1;
@@ -170,12 +170,12 @@ model
             //unconstrained
             for (layer in 1:n_layers)
             {
-              for (state_cur in 1:(n_label*n_state))
+              for (state_cur in 1:(n_class*n_state))
               {
                 actual_state_cur = state_cur;
                 temp = theta_feature_cont[layer, actual_state_cur]' * X_train[i,j];
 
-                for (state_prev in 1:(n_label*n_state))
+                for (state_prev in 1:(n_class*n_state))
                 {
                   actual_state_prev = state_prev;
                   temp_uncon[layer, state_cur, state_prev] =  temp + theta_transition[layer, actual_state_prev, actual_state_cur];
@@ -193,14 +193,14 @@ model
 
                 for (layer in 1:n_layers)
                 {
-                  states_cur[layer] = (temp_state_cur % (n_label*n_state)) + 1;
-                  temp_state_cur = temp_state_cur / (n_label*n_state);
+                  states_cur[layer] = (temp_state_cur % (n_class*n_state)) + 1;
+                  temp_state_cur = temp_state_cur / (n_class*n_state);
                 }
 
                 for (layer in 1:n_layers)
                 {
-                  num3 = num3 * (n_label*n_state);
-                  actual_state = actual_state + (states_cur[layer] - 1) * (num3 / (n_label*n_state));
+                  num3 = num3 * (n_class*n_state);
+                  actual_state = actual_state + (states_cur[layer] - 1) * (num3 / (n_class*n_state));
                 }
 
                 actual_state = actual_state + 1;
@@ -232,9 +232,9 @@ model
 
             for (i_layer in 1:n_layers)
             {
-              for (j_state in 1:(n_label*n_state))
+              for (j_state in 1:(n_class*n_state))
               {
-                for (k in 1:(n_label*n_state))
+                for (k in 1:(n_class*n_state))
                 {
                   temp_uncon[i_layer,j_state,k] = 0;
                 }
@@ -264,13 +264,13 @@ model
 
     for (layer in 1:n_layers)
     {
-      for (i_state in 1:(n_label * n_state))
+      for (i_state in 1:(n_class * n_state))
       {
         for (feature in 1:n_feature)
         {
           target += -reg_l2_feature * theta_feature_cont[layer, i_state, feature] ^ 2;
         }
-        for (i_prior_state in 1:(n_label * n_state))
+        for (i_prior_state in 1:(n_class * n_state))
         {
            target += -reg_l2_transition * theta_transition[layer, i_prior_state, i_state] ^ 2;
         }
@@ -288,16 +288,16 @@ generated quantities
 {
   //using online inference(forward algorithm)
 
-vector[n_label] Prob_y[n_testvid,max_step];
-vector[n_label] transformed_proby[n_testvid,max_step];
-vector[n_label] Actual_proby[n_testvid,max_step];
+vector[n_class] Prob_y[n_testvid,max_step];
+vector[n_class] transformed_proby[n_testvid,max_step];
+vector[n_class] Actual_proby[n_testvid,max_step];
 
 int label_previous = 1;
 real max_prob;
 
 vector[num2] alpha_uncon[max_step];
 
-real temp_uncon[n_layers, n_label * n_state, n_label * n_state]; 
+real temp_uncon[n_layers, n_class * n_state, n_class * n_state]; 
 vector[n_state*num4] temp_alpha_store;
 
 int states_cur[n_layers];
@@ -317,9 +317,9 @@ int num3;
 
 for (i_layer in 1:n_layers)
 {
-  for (j_state in 1:(n_label*n_state))
+  for (j_state in 1:(n_class*n_state))
   {
-    for (k in 1:(n_label*n_state))
+    for (k in 1:(n_class*n_state))
     {
       temp_uncon[i_layer,j_state,k] = 0;
     }
@@ -330,7 +330,7 @@ for(i in 1:n_testvid)
 {
   for (j in 1:max_step)
   {
-    for (l in 1:n_label)
+    for (l in 1:n_class)
     {
       Prob_y[i,j,l] = 0;
     }
@@ -355,12 +355,12 @@ for(i in 1:n_testvid)
   { 
     for (layer in 1:n_layers)
     {
-      for (state_cur in 1:(n_label*n_state))
+      for (state_cur in 1:(n_class*n_state))
       {
         actual_state_cur = state_cur;
         temp = theta_feature_cont[layer, actual_state_cur]' * X_test[i,j];
 
-        for (state_prev in 1:(n_label*n_state))
+        for (state_prev in 1:(n_class*n_state))
         {
           actual_state_prev =  state_prev;
           temp_uncon[layer, state_cur, state_prev] =  temp + theta_transition[layer, actual_state_prev, actual_state_cur];
@@ -378,14 +378,14 @@ for(i in 1:n_testvid)
 
       for (layer in 1:n_layers)
       {
-        states_cur[layer] = (temp_state_cur % (n_label*n_state)) + 1;
-        temp_state_cur = temp_state_cur / (n_label*n_state);
+        states_cur[layer] = (temp_state_cur % (n_class*n_state)) + 1;
+        temp_state_cur = temp_state_cur / (n_class*n_state);
       }
 
       for (layer in 1:n_layers)
       {
-        num3 = num3 * (n_label*n_state);
-        actual_state = actual_state + (states_cur[layer] - 1) * (num3 / (n_label*n_state));
+        num3 = num3 * (n_class*n_state);
+        actual_state = actual_state + (states_cur[layer] - 1) * (num3 / (n_class*n_state));
       }
 
       actual_state = actual_state + 1;
@@ -403,7 +403,7 @@ for(i in 1:n_testvid)
     }   
 
     //inference
-    for (label in 1:n_label)
+    for (label in 1:n_class)
     {
       temp_alpha_store[1:(n_state*num4)] = alpha_uncon[j,(n_state*(label-1)*num4 + 1):(n_state*label*num4)];    //alpha[j,(label-1)*3+store];
 
@@ -417,9 +417,9 @@ for(i in 1:n_testvid)
 
     for (i_layer in 1:n_layers)
     {
-      for (j_state in 1:(n_label*n_state))
+      for (j_state in 1:(n_class*n_state))
       {
-        for (k in 1:(n_label*n_state))
+        for (k in 1:(n_class*n_state))
         {
           temp_uncon[i_layer,j_state,k] = 0;
         }
@@ -429,11 +429,11 @@ for(i in 1:n_testvid)
   for (j in 1:test_step_length[i])
   {
     max_prob = max(Prob_y[i, j]);
-    for (label in 1:n_label)
+    for (label in 1:n_class)
     {
       transformed_proby[i,j,label] = exp(Prob_y[i, j, label] - max_prob);
     }
-    for (label in 1:n_label)
+    for (label in 1:n_class)
     {
       Actual_proby[i,j,label] = transformed_proby[i,j,label]/(sum(transformed_proby[i,j]));  
     }
