@@ -26,7 +26,7 @@ Next updates:
 
 If you find our codes useful, please cite our paper(s) [1, 6].
 
-Email us for any queries on FLDCRF or our codes:
+Email for any queries on FLDCRF or our codes:
 1. satyajit001@e.ntu.edu.sg
 2. satyajitneogiju@gmail.com
 
