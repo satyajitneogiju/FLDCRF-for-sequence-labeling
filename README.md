@@ -1,12 +1,21 @@
 # FLDCRF-for-sequence-labeling
+
 Factored Latent-Dynamic Conditional Random Fields for sequence labeling and prediction. FLDCRF outperforms LSTM across 6 experiments on 4 datasets.  
 
 FLDCRF [1] is a single and multi-label generalization of LDCRF [2]. In our single-label experiments on 4 datasets (NTU [1], UCI opportunity [3], UCI gesture phase [4], JAAD [5]) across 6 experiments, FLDCRF improves over LDCRF performance and outperforms LSTM and LSTM-CRF on all test sets. 
 
 Additionally, LSTM is known for tedious hyper-parameter optimization process, big-data-driven performance and long training time. FLDCRF offers easier model selection (with no need to tune number of epochs), performs better than LSTM on small/medium datasets, is much easier to comprehend and takes significantly lesser training time, even without GPU implementation. We also find FLDCRF to generalize better over validation and test sets, i.e., selected LSTM models perform worse on test sets than selected FLDCRF models, even though in some cases LSTM models perform better on validation. Such inconsistency across validation and test, blurry intuition and tedious model selection makes LSTM hard for industrial applications.
 
+# Update 27/11
 
-In our recent multi-label sequence labeling experiment on UCI opportunity dataset [3], FLDCRF outperformed LDCRF, Factorial CRF, LSTM-CRF, LSTM and a LSTM multi label model. We will update the paper link for multi-label experiment shortly.
+Our paper [1] is acccepted by IEEE T-ITS.
+
+We uploaded our journal preprint on FLDCRF for sequence labeling here [2] - https://arxiv.org/abs/1911.03667, 2019. In this paper, we draw comparison between FLDCRF and LSTM on several modeling aspects across 3 different experiments over 2 datasets [3,4], in addition to the test results. FLDCRF outperformed all state-of-the art sequence models viz., CRF, LDCRF, Factorial CRF, LSTM, LSTM-CRF and a LSTM multi label model.
+
+Uploaded our tabulated data (features and labels) for experiments on the datasets [3,4].
+
+
+# Update 08/09
 
 To run our codes, you need to install pystan - 
 
@@ -48,3 +57,7 @@ Annual ACM Symposium on Applied Computing (SAC), p. 46-52, 2013.
 Using Factored Latent Dynamic Conditional Random Fields". In Proceed-
 ings of the 2017 IEEE Symposium Series on Computational Intelligence (SSCI), DOI:
 10.1109/SSCI.2017.8280970, 2017.
+
+7. S. Neogi, J. Dauwels, “Factored Latent-Dynamic Conditional Random
+Fields for Single and Multi-label Sequence Modeling”, URL:
+https://arxiv.org/abs/1911.03667, 2019.
