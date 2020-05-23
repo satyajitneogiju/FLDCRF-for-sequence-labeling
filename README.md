@@ -32,13 +32,13 @@ PyStan is the Python interface of Stan probabilistic modeling language. For pyst
 
 Please download the Readme.rtf file for further instructions.  
 
-We are also in the process of applying FLDCRF in end-to-end models and its GPU implementation. Any contributions are welcome. We also plan to test FLDCRF on larger datasets.
+We are also in the process of applying FLDCRF in end-to-end models (CNN-FLDCRF) and its GPU implementation. Any contributions are welcome. We also plan to test FLDCRF on larger datasets.
 
 Next updates:
 1. Forward-backward inference
-2. Multi-label FLDCRF code and data
-3. GPU implementation
-4. CNN-FLDCRF
+2. GPU implementation
+3. CNN-FLDCRF
+4. Comparing FLDCRF/LSTM on large NLP datasets
 
 If you find our codes useful, please cite our paper(s) [1, 6].
 
