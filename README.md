@@ -6,6 +6,13 @@ FLDCRF [1] is a single and multi-label generalization of LDCRF [2]. In our singl
 
 Additionally, LSTM is known for tedious hyper-parameter optimization process, big-data-driven performance and long training time. FLDCRF offers easier model selection (with no need to tune number of epochs), outperforms LSTM on several datasets, is much easier to comprehend and takes significantly lesser training time, even without GPU implementation. We also find FLDCRF to generalize better over validation and test sets, i.e., selected LSTM models perform worse on test sets than selected FLDCRF models, even though in some cases LSTM models perform better on validation. Such inconsistency across validation and test, blurry intuition and tedious model selection makes LSTM hard for industrial applications.
 
+# Update 23/05
+
+Journal paper on FLDCRF/LSTM submitted to JMLR [7].
+
+Uploaded codes for FLDCRF multilabel.
+
+
 # Update 27/11
 
 Our paper [1] is acccepted by IEEE T-ITS.
